@@ -1,6 +1,3 @@
-Tạo Database:
-
-````markdown
 # Database Operations
 
 ## Create Database
@@ -8,37 +5,36 @@ Tạo Database:
 ```sql
 CREATE DATABASE [IF NOT EXISTS] database_name;
 ```
-````
 
-Check newly created DB / Show all DBs on the server:
+## Check and Display Databases
 
 ```sql
 SHOW DATABASES;
 ```
 
-Select a DB to work with:
+## Select Database to Work With
 
 ```sql
 USE database_name;
 ```
 
-Show tables in the DB:
+## Show Tables in Database
 
 ```sql
 SHOW TABLES;
 ```
 
-Delete a Database (physically):
+## Delete Database
 
 ```sql
 DROP DATABASE [IF EXISTS] database_name;
 ```
 
-## Data Types
+# Data Types
 
-### Numeric
+## Numeric Types
 
-- `TINYINT(BOOLEAN)` - 1 byte
+- `TINYINT` (BOOLEAN) - 1 byte
 - `SMALLINT` - 2 bytes
 - `MEDIUMINT` - 3 bytes
 - `INT/INTEGER` - 4 bytes
@@ -47,7 +43,7 @@ DROP DATABASE [IF EXISTS] database_name;
 - `DOUBLE` - 8 bytes
 - `DECIMAL` - depends on definition
 
-### String
+## String Types
 
 - `CHAR` - Fixed-length character string
 - `VARCHAR` - Variable-length character string
@@ -62,7 +58,7 @@ DROP DATABASE [IF EXISTS] database_name;
 - `MEDIUMTEXT` - Medium-sized text string
 - `LONGTEXT` - Large text string
 
-### Time
+## Date and Time Types
 
 - `DATE` - 'YYYY-MM-DD', 3 bytes, accuracy: 1 day
 - `TIME` - 'hh:mm:ss', 3-5 bytes, accuracy: 100 nanoseconds
@@ -70,65 +66,118 @@ DROP DATABASE [IF EXISTS] database_name;
 - `TIMESTAMP` - 'YYYY-MM-DD hh:mm:ss'
 - `YEAR` - 'YYYY', range: '1901' to '2155', and '0000'
 
-## Create Table
+# Create Table
 
 ```sql
 CREATE TABLE [IF NOT EXISTS] table_name (
-    column_name data_type [default_value] [column_constraints],
-    ...
-    table_constraints
+  column_name data_type [default_value] [column_constraints],
+  ...
+  table_constraints
 ) ENGINE=table_type;
 ```
 
-- `default_value`: Default value for a column (default is NULL)
-- `table_type`: Storage engine type (default is InnoDB in MySQL 5.5)
+- `default_value`: Default value for a column if not specified (default is NULL)
+- `table_type`: Storage engine type (default is InnoDB for MySQL 5.5)
 - `constraints`: Primary Key, Foreign Key, Not Null, Unique, Check
-- `column_constraint`: Applied to a specific column
-- `table_constraint`: Applied to one or more columns
+- `column_constraints`: Applied to a specific column
+- `table_constraints`: Applied to one or more columns
 
-### Constraints
+## Constraints
 
-- `PRIMARY KEY`: Uniquely identifies each row in the table
-- `NOT NULL`: Ensures column value cannot be NULL
+- `PRIMARY KEY`: Uniquely identifies each row in a table
+- `NOT NULL`: Ensures a column cannot have NULL value
 - `UNIQUE`: Ensures all values in a column are unique (can be NULL if NOT NULL is not applied)
-- `CHECK`: Not supported in MySQL (declaration has no effect)
+- `CHECK`: Not supported by MySQL, can be declared but has no effect
 
-### Primary Key Constraints
+## Primary Key Constraints
 
-- Column level:
-  - `ON UPDATE CASCADE`: Automatically updates dependent records when referenced data changes
-  - Default behavior for DELETE and UPDATE is RESTRICT if options are not specified
+### Column Level
 
-## Alter Table
+```sql
+column_name data_type [CONSTRAINT constraint_name] PRIMARY KEY
+```
+
+### Table Level
+
+```sql
+[CONSTRAINT constraint_name] PRIMARY KEY (column_name1, column_name2, ...)
+```
+
+## Naming Constraints
+
+```sql
+CONSTRAINT constraint_name constraint_definition
+```
+
+- Useful for error handling when constraint violations occur
+
+## Foreign Key Constraints
+
+```sql
+CONSTRAINT fk_name FOREIGN KEY (column_name) REFERENCES parent_table (parent_column) [ON DELETE RESTRICT] [ON UPDATE CASCADE]
+```
+
+- `ON DELETE RESTRICT`: Prevents deletion of referenced data
+- `ON UPDATE CASCADE`: Automatically updates referencing data
+
+# Alter Table
 
 ```sql
 ALTER TABLE table_name [option]
-    ADD [COLUMN] column_definition,
-    MODIFY [COLUMN] create_definition,
-    DROP [COLUMN] column_name,
-    ADD table_constraint,
-    DROP constraint_name;
+  ADD [COLUMN] column_definition,
+  MODIFY [COLUMN] column_definition,
+  DROP [COLUMN] column_name,
+  ADD table_constraint,
+  DROP constraint_name;
 ```
 
-````
-  ```sql
-  column_name data_type [CONSTRAINT constraint_name] PRIMARY KEY
-````
+# Select Statement
 
-- Table level:
-  ```sql
-  [CONSTRAINT constraint_name] PRIMARY KEY (column_name1, column_name2, ...)
-  ```
+```sql
+SELECT column1, column2, ... (* for all)
+FROM table_name
+[WHERE condition]
+[GROUP BY column]
+[HAVING condition]
+[ORDER BY column]
+[LIMIT number];
+```
 
-### Naming Constraints
+- `WHERE`: Filters rows based on condition
+  - `AND/OR`: Combines conditions
+  - `IS NULL`: Finds NULL values
+- `LIMIT`: Limits the number of returned records
 
-- `CONSTRAINT <name> <constraint>`: Useful for error handling when constraint violations occur
+## LIMIT Clause
 
-### Foreign Key (Table level)
+### First N Records
 
-- Example: city -> country
-  ```sql
-  CONSTRAINT fk_city_country FOREIGN KEY (country_id)
-  REFERENCES country (country_id) [ON DELETE RESTRICT] [ON UPDATE CASCADE]
-  ```
-  - `ON DELETE RESTRICT`: Prevents deletion of referenced data if there are dependent records
+```sql
+SELECT * FROM table_name
+LIMIT N;
+```
+
+### N Records Starting from S
+
+```sql
+SELECT * FROM table_name
+LIMIT S, N;
+```
+
+## DISTINCT Keyword
+
+Removes duplicate data from SELECT statement.
+
+```sql
+SELECT DISTINCT column_name FROM table_name;
+```
+
+- Example:
+
+```sql
+SELECT DISTINCT jobTitle FROM Employees;
+```
+
+```
+
+```
